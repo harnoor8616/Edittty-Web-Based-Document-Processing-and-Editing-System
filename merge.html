@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - PDF Tools</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <link rel="stylesheet" href="/css/merge.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>PDF Tools</h2>
+            </div>
+            <div class="nav-links">
+                <span class="nav-link active">Merge PDF</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">Merge PDF Files</h1>
+                <p class="hero-subtitle">Combine multiple PDF documents into one file. Fast, secure, and completely free.</p>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-placeholder">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drag & drop your PDF files here</h3>
+                        <p>or click to browse</p>
+                        <button class="btn-primary upload-btn" id="uploadBtn">Select PDF Files</button>
+                        <input type="file" id="fileInput" multiple accept=".pdf" hidden>
+                    </div>
+                    <div class="upload-limit">
+                        <span>Max 10 files • Up to 100MB total</span>
+                    </div>
+                </div>
+
+                <!-- Files List -->
+                <div class="files-list" id="filesList">
+                    <div class="empty-state">
+                        <p>No files selected yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preview Section -->
+        <section class="preview-section" id="previewSection" style="display: none;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Preview & Reorder</h2>
+                    <div class="section-actions">
+                        <button class="btn-secondary" id="clearAllBtn">Clear All</button>
+                    </div>
+                </div>
+                <div class="preview-grid" id="previewGrid">
+                    <!-- Preview items will be generated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section class="process-section" id="processSection" style="display: none;">
+            <div class="container">
+                <div class="process-content">
+                    <button class="btn-primary btn-large" id="mergeBtn">
+                        <span class="btn-text">Merge PDFs</span>
+                        <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+                    </button>
+                    <p class="process-info">Your files will be processed locally in your browser. No data is uploaded to servers.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 PDF Tools. All rights reserved. | Processed locally in your browser.</p>
+        </div>
+    </footer>
+
+    <script src="/js/merge.js"></script>
+</body>
+</html> 

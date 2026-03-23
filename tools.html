@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tools - PDFPro</title>
+    <meta name="description" content="All PDF tools in one place. Merge, split, compress and more.">
+    <link rel="icon" href="assets/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Same navbar as index.html -->
+    <nav class="navbar" id="navbar">
+        <!-- Copy navbar from index.html -->
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/logo.png" alt="PDFPro Logo" class="logo">
+                <span>PDFPro</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="tools.html" class="nav-link active">Tools</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="tools-grid">
+        <div class="container">
+            <div style="text-align: center; padding: 4rem 0;">
+                <h1 style="font-size: 3rem; margin-bottom: 1rem;">All PDF Tools</h1>
+                <p style="font-size: 1.2rem; color: #6b7280;">Choose a tool to get started</p>
+            </div>
+            
+            <!-- Same tools grid as home page but larger -->
+            <div class="tools-container">
+                <a href="merge.html" class="tool-card large">
+                    <div class="tool-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                    <h3>Merge PDF</h3>
+                    <p>Combine multiple PDFs into single document</p>
+                </a>
+                <!-- Repeat all 10 tools with same structure -->
+                <!-- ... (copy from index.html tools section) ... -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Same footer as index.html -->
+    <footer class="footer">
+        <!-- Copy footer from index.html -->
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>

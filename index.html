@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDFPro - Free Online PDF Editor & Tools</title>
+    <meta name="description" content="Edit, merge, split, compress PDFs online. Free, secure, no signup required.">
+    <meta name="keywords" content="pdf editor, merge pdf, split pdf, compress pdf, pdf tools">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/logo.png" alt="PDFPro Logo" class="logo">
+                <span>PDFPro</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
+                <li><a href="tools.html" class="nav-link">Tools</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Edit PDFs Online</h1>
+                <p class="hero-subtitle">Merge, split, compress, and edit your PDFs with our powerful, free online tools. No signup required.</p>
+                <div class="hero-buttons">
+                    <a href="tools.html" class="btn btn-primary">Start Editing</a>
+                    <a href="#tools" class="btn btn-secondary">View All Tools</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="pdf-mockup">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose PDFPro?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Process files instantly in your browser. No waiting, no servers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>100% Secure</h3>
+                    <p>Your files never leave your device. Complete privacy guaranteed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Privacy First</h3>
+                    <p>No accounts, no tracking, no data collection. Files auto-delete after use.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Grid -->
+    <section class="tools-grid" id="tools">
+        <div class="container">
+            <h2 class="section-title">Powerful PDF Tools</h2>
+            <div class="tools-container">
+                <a href="merge.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                    </div>
+                    <h3>Merge PDF</h3>
+                    <p>Combine multiple PDFs into one</p>
+                </a>
+                <a href="split.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Split PDF</h3>
+                    <p>Split PDF into separate pages</p>
+                </a>
+                <a href="compress.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-compress"></i>
+                    </div>
+                    <h3>Compress PDF</h3>
+                    <p>Reduce PDF file size</p>
+                </a>
+                <a href="pdf-to-image.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-image"></i>
+                    </div>
+                    <h3>PDF to Image</h3>
+                    <p>Convert PDF to JPG/PNG</p>
+                </a>
+                <a href="image-to-pdf.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3>Image to PDF</h3>
+                    <p>Convert images to PDF</p>
+                </a>
+                <a href="rotate.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <h3>Rotate PDF</h3>
+                    <p>Rotate pages 90/180/270°</p>
+                </a>
+                <a href="watermark.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-watermark"></i>
+                    </div>
+                    <h3>Add Watermark</h3>
+                    <p>Add text/image watermark</p>
+                </a>
+                <a href="page-numbers.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-list-ol"></i>
+                    </div>
+                    <h3>Page Numbers</h3>
+                    <p>Add page numbers to PDF</p>
+                </a>
+                <a href="extract-text.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-font"></i>
+                    </div>
+                    <h3>Extract Text</h3>
+                    <p>Extract text from PDF</p>
+                </a>
+                <a href="protect.html" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Protect PDF</h3>
+                    <p>Add password protection</p>
+                </a>
+            </div>
+            <div class="tools-cta">
+                <a href="tools.html" class="btn btn-primary">View All Tools</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Trusted by Thousands</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p>"Best free PDF tool I've used. Lightning fast and completely private."</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Sarah Johnson</span>
+                        <span class="author-role">Designer</span>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p>"Perfect for merging contracts and adding watermarks. Saves me hours!"</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Mike Chen</span>
+                        <span class="author-role">Lawyer</span>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p>"Compresses PDFs without losing quality. Game changer for my workflow."</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Emma Rodriguez</span>
+                        <span class="author-role">Marketer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is it really free?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! All tools are completely free with no hidden fees or limits.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Are my files secure?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>100% secure. All processing happens in your browser. Files never leave your device.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What file size limit?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Up to 100MB per file. Most tools handle larger files depending on your browser memory.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Get Started?</h2>
+                <p>No signup required. Just upload and edit your PDFs instantly.</p>
+                <a href="tools.html" class="btn btn-primary btn-large">Start Editing Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span>PDFPro</span>
+                    </div>
+                    <p>Free online PDF editor. Edit, merge, split, and more - all in your browser.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="merge.html">Merge PDF</a></li>
+                        <li><a href="split.html">Split PDF</a></li>
+                        <li><a href="compress.html">Compress PDF</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PDFPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
