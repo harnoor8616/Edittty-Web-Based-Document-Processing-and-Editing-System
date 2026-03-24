@@ -1,24 +1,30 @@
-// Main JavaScript for navigation, dark mode, and smooth scrolling
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize dark mode
     initDarkMode();
-    
-    // Initialize navbar
     initNavbar();
-    
-    // Initialize smooth scrolling
     initSmoothScroll();
-    
-    // Initialize FAQ
+    initToolsToggle();
     initFAQ();
 });
+function initToolsToggle() {
+    const btn = document.getElementById('toggleToolsBtn');
+    const moreTools = document.querySelector('.hidden-tools');
 
-// Dark Mode Toggle
+    if (!btn || !moreTools) return;
+
+    btn.addEventListener('click', () => {
+        moreTools.classList.toggle('show');
+
+        if (moreTools.classList.contains('show')) {
+            btn.textContent = 'See Less';
+        } else {
+            btn.textContent = 'See More';
+        }
+    });
+}
 function initDarkMode() {
     const toggle = document.getElementById('darkModeToggle');
     const html = document.documentElement;
     
-    // Load saved theme
     const savedTheme = localStorage.getItem('theme') || 'light';
     html.setAttribute('data-theme', savedTheme);
     updateToggleIcon(savedTheme);
@@ -32,7 +38,6 @@ function initDarkMode() {
         updateToggleIcon(newTheme);
     });
 }
-
 function updateToggleIcon(theme) {
     const toggle = document.getElementById('darkModeToggle');
     const icon = toggle.querySelector('i');
@@ -43,8 +48,6 @@ function updateToggleIcon(theme) {
         icon.className = 'fas fa-moon';
     }
 }
-
-// Navbar Mobile Toggle
 function initNavbar() {
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
@@ -53,14 +56,12 @@ function initNavbar() {
         navMenu.classList.toggle('active');
     });
     
-    // Close menu when clicking on a link
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             navMenu.classList.remove('active');
         });
     });
     
-    // Close menu on window resize
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
             navMenu.classList.remove('active');
@@ -68,7 +69,6 @@ function initNavbar() {
     });
 }
 
-// Smooth Scrolling
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -83,23 +83,18 @@ function initSmoothScroll() {
         });
     });
 }
-
-// FAQ Toggle
 function initFAQ() {
     document.querySelectorAll('.faq-question').forEach(question => {
         question.addEventListener('click', function() {
             const answer = this.nextElementSibling;
             const icon = this.querySelector('i');
             
-            // Toggle active state
             answer.classList.toggle('active');
             icon.style.transform = answer.classList.contains('active') 
                 ? 'rotate(180deg)' : 'rotate(0deg)';
         });
     });
 }
-
-// Navbar scroll effect
 window.addEventListener('scroll', function() {
        const navbar = document.getElementById('navbar');
     if (window.scrollY > 100) {
