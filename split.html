@@ -3,8 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Split PDF - PDFPro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Split PDF into individual pages or custom ranges. Free online tool.">
-    <link rel="icon" href="assets/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght
+    <title>Split PDF - PDF Tools</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <link rel="stylesheet" href="/css/split.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>PDF Tools</h2>
+            </div>
+            <div class="nav-links">
+                <a href="merge.html" class="nav-link">Merge PDF</a>
+                <span class="nav-link active">Split PDF</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">Split PDF Files</h1>
+                <p class="hero-subtitle">Extract specific pages or create individual files from your PDF. Preview and select exactly what you need.</p>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-placeholder">
+                        <div class="upload-icon">✂️</div>
+                        <h3>Drag & drop your PDF here</h3>
+                        <p>or click to browse (single file only)</p>
+                        <button class="btn-primary upload-btn" id="uploadBtn">Select PDF File</button>
+                        <input type="file" id="fileInput" accept=".pdf" hidden>
+                    </div>
+                    <div class="upload-limit">
+                        <span>Max 1 file • Up to 100MB</span>
+                    </div>
+                </div>
+
+                <!-- File Info -->
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <div class="file-name" id="fileName"></div>
+                        <div class="file-stats">
+                            <span class="stat"><strong id="pageCount">-</strong> pages</span>
+                            <span class="stat" id="fileSize">-</span>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" id="clearFileBtn">Change File</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Options Section -->
+        <section class="options-section" id="optionsSection" style="display: none;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Choose Split Method</h2>
+                </div>
+                <div class="options-grid">
+                    <div class="option-card active" data-mode="individual">
+                        <div class="option-icon">📄</div>
+                        <h3>Individual Files</h3>
+                        <p>Create separate PDF for each selected page</p>
+                    </div>
+                    <div class="option-card" data-mode="combined">
+                        <div class="option-icon">📋</div>
+                        <h3>Combined PDF</h3>
+                        <p>Extract selected pages into one PDF file</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preview Section -->
+        <section class="preview-section" id="previewSection" style="display: none;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Page Preview & Selection</h2>
+                    <div class="selection-info">
+                        <span id="selectedCount">0</span> of <span id="totalPages">-</span> pages selected
+                        <button class="btn-secondary btn-small" id="selectAllBtn">Select All</button>
+                        <button class="btn-secondary btn-small" id="clearSelectionBtn">Clear</button>
+                    </div>
+                </div>
+                
+                <!-- Range Input -->
+                <div class="range-input" id="rangeInput">
+                    <label>Quick Range: Pages <input type="text" id="pageRange" placeholder="1-3,5,7-9"> 
+                        <button class="btn-primary btn-small" id="applyRangeBtn">Apply</button>
+                    </label>
+                </div>
+
+                <div class="preview-grid" id="previewGrid">
+                    <!-- Page previews will be generated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section class="process-section" id="processSection" style="display: none;">
+            <div class="container">
+                <div class="process-content">
+                    <button class="btn-primary btn-large" id="splitBtn">
+                        <span class="btn-text" data-mode="individual">Download Individual Files</span>
+                        <span class="btn-text" data-mode="combined" style="display: none;">Download Combined PDF</span>
+                        <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+                    </button>
+                    <p class="process-info">All processing happens locally in your browser. No files are uploaded to servers.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 PDF Tools. All rights reserved. | Processed locally in your browser.</p>
+        </div>
+    </footer>
+
+    <script src="/js/split.js"></script>
+</body>
+</html>

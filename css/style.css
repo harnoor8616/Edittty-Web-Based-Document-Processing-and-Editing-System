@@ -765,3 +765,36 @@ body {
         min-height: calc(100vh - 70px);
     }
 }
+/* Dark Mode */
+[data-theme="dark"] {
+    background: #111827;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .navbar {
+    background: rgba(17, 24, 39, 0.95);
+}
+
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .tool-card,
+[data-theme="dark"] .testimonial-card,
+[data-theme="dark"] .controls,
+[data-theme="dark"] .file-item {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .section-title {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .faq-question {
+    background: #1f2937;
+}
+.hidden-tools {
+    display: none;
+}
+
+.hidden-tools.show {
+    display: contents; /* keeps grid layout */
+}
