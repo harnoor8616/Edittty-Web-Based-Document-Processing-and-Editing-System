@@ -1000,51 +1000,187 @@ body {
     transition: all 0.3s ease;
 } */
 
-.footer-section ul {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.4rem 1.5rem;
-}
-
-@media (max-width: 600px) {
-    .footer-section ul {
-        grid-template-columns: 1fr;
-        /* back to single column on small screens */
-    }
-}
-
-.footer-section ul {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2px 10px;
-    /* very small row gap, small column gap */
-}
-
+/* Footer section container */
 .footer-section {
-    padding: 0;
+    padding: 4px 0;
     margin: 0;
 }
 
+/* Heading */
 .footer-section h4 {
-    margin-bottom: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 3px;
+    line-height: 1.1;
 }
 
+/* List layout */
 .footer-section ul {
-    padding: 0;
-    margin: 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px 8px;
+    gap: 2px 6px;
+    /* tight spacing */
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
+/* List items */
 .footer-section ul li {
     margin: 0;
     padding: 0;
 }
 
+/* Links */
 .footer-section a {
-    font-size: 0.8rem;
-    line-height: 1.2;
+    font-size: 0.75rem;
+    line-height: 1.1;
     padding: 0;
     margin: 0;
+    display: inline-block;
+}
+
+/* Mobile view */
+@media (max-width: 600px) {
+    .footer-section ul {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+}
+
+/* DARK MODE FULL FIX */
+[data-theme="dark"] {
+    background: #111827;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .navbar.scrolled {
+    background: rgba(17, 24, 39, 0.95) !important;
+}
+
+[data-theme="dark"] .navbar,
+[data-theme="dark"] .navbar.scrolled,
+[data-theme="dark"] .navbar.sticky {
+    background: rgba(17, 24, 39, 0.95) !important;
+}
+
+/* Navbar */
+[data-theme="dark"] .navbar {
+    background: rgba(17, 24, 39, 0.95);
+}
+
+[data-theme="dark"] .nav-link {
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .nav-container {
+    background: transparent;
+    /* usually you don't need bg here */
+}
+
+/* Sections */
+[data-theme="dark"] .features,
+[data-theme="dark"] .tools-grid,
+[data-theme="dark"] .faq,
+[data-theme="dark"] .about,
+[data-theme="dark"] .contact,
+[data-theme="dark"] .stats {
+    background: #111827;
+}
+
+/* Cards */
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .tool-card,
+[data-theme="dark"] .testimonial-card,
+[data-theme="dark"] .contact-card,
+[data-theme="dark"] .controls,
+[data-theme="dark"] .file-item,
+[data-theme="dark"] .faq-item {
+    background: #1f2937;
+    color: #f9fafb;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Text fixes */
+[data-theme="dark"] .section-title,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] p {
+    color: #d1d5db;
+}
+
+/* FAQ */
+[data-theme="dark"] .faq-question {
+    background: #1f2937;
+}
+
+[data-theme="dark"] .faq-answer {
+    background: #111827;
+}
+
+/* Inputs */
+[data-theme="dark"] input,
+[data-theme="dark"] select {
+    background: #111827;
+    color: #f9fafb;
+    border: 2px solid #374151;
+}
+
+/* Upload */
+[data-theme="dark"] .upload-area {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+/* Footer */
+[data-theme="dark"] .footer {
+    background: #030712;
+}
+
+[data-theme="dark"] .footer a {
+    color: #9ca3af;
+}
+
+/* Buttons */
+[data-theme="dark"] .btn-primary {
+    background: #6366f1;
+    color: white;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* About box */
+[data-theme="dark"] .about-box {
+    background: linear-gradient(135deg, #1f2937, #111827);
+}
+
+.footer {
+    padding: 10px 0;
+    /* small */
+    margin: 0;
+    height: auto;
+}
+
+.footer-bottom {
+    font-size: 0.65rem;
+    margin-top: 2px;
+}
+
+.footer-bottom {
+    font-size: 0.7rem;
+    /* smaller text */
+    margin: 4px 0 0 0;
+    /* almost no margin */
+    padding: 0;
+    /* remove padding */
+    line-height: 1.2;
+    text-align: center;
+    opacity: 0.8;
+    /* subtle look (optional) */
 }
