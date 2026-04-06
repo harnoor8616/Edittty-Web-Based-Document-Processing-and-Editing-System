@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split PDF - PDFPRO</title>
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* CSS Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* PRIMARY BRAND COLORS */
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+
+            /* GRADIENT */
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+
+            /* SEMANTIC COLORS */
+            --success: #10b981;
+            --error: #ef4444;
+
+            /* BACKGROUNDS */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+
+            /* TEXT */
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+
+            /* BORDER */
+            --border: #e5e7eb;
+
+            /* SHADOWS */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+            /* BORDER RADIUS */
+            --radius: 12px;
+            --radius-lg: 20px;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border: #374151;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background: var(--bg-primary);
+            border: 3px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover,
+        .upload-area.has-file {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(99, 102, 241, 0.05) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Pages Section */
+        .pages-section {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .pages-info {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .pages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .page-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .page-item:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .page-item.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        }
+
+        .page-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-thumbnail {
+            width: 60px;
+            height: 84px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .page-number {
+            font-weight: 600;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .split-mode-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .split-mode-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border);
+            background: transparent;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .mode-btn.active,
+        .mode-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Split Button */
+        .split-section {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .split-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1.25rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .split-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+        }
+
+        .split-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .split-btn.loading {
+            padding-right: 4rem;
+            position: relative;
+        }
+
+        .split-btn.loading::after {
+            content: '';
+            position: absolute;
+            right: 1.5rem;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .split-mode-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .page-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">PDFPRO</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="merge.html">Merge PDF</a></li>
+                <li><a href="split.html">Split PDF</a></li>
+            </ul>
+            <button class="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Split PDF Files</h1>
+        <p>Split PDF into multiple files by page ranges, specific pages, or extract pages easily. No software required.
+        </p>
+    </section>
+
+    <!-- Upload Area -->
+    <div class="pages-section">
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <div class="upload-text" id="uploadText">Drop your PDF here or click to browse</div>
+            <div class="upload-subtext">Supports files up to 50MB</div>
+            <input type="file" id="fileInput" class="file-input" accept=".pdf">
+        </div>
+
+        <!-- Pages Info -->
+        <div class="pages-info" id="pagesInfo" style="display: none;">
+            <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;" id="fileName"></div>
+            <div style="color: var(--text-secondary); font-size: 1rem;" id="totalPages"></div>
+        </div>
+
+        <!-- Split Mode Selector -->
+        <div class="split-mode-selector" id="splitModeSelector" style="display: none;">
+            <div style="font-weight: 600; margin-bottom: 1rem; text-align: center;">Split by:</div>
+            <div class="split-mode-buttons">
+                <button class="mode-btn active" data-mode="all">All pages into separate files</button>
+                <button class="mode-btn" data-mode="range">Custom page range</button>
+                <button class="mode-btn" data-mode="selected">Selected pages only</button>
+            </div>
+        </div>
+
+        <!-- Pages List -->
+        <div class="pages-list" id="pagesList"></div>
+    </div>
+
+    <!-- Messages -->
+    <div class="pages-section" id="messagesContainer"></div>
+
+    <!-- Split Button -->
+    <div class="split-section">
+        <button class="split-btn" id="splitBtn" disabled>
+            <i class="fas fa-cut"></i>
+            Split PDF
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p>&copy; 2026 PDFPRO. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- PDF-Lib CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <script>
+        class PDFSplitter {
+            constructor() {
+                this.pdfFile = null;
+                this.pdfDoc = null;
+                this.pages = [];
+                this.selectedPages = new Set();
+                this.splitMode = 'all'; // 'all', 'range', 'selected'
+                this.initTheme();
+                this.bindEvents();
+                PDFLib.PDFDocument.load()
+                PDFLib.PDFDocument.create()
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+                this.updateThemeIcon();
+            }
+
+            toggleTheme() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+                this.updateThemeIcon();
+            }
+
+            updateThemeIcon() {
+                const icon = document.querySelector('.theme-toggle i');
+                if (icon) {
+                    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+                }
+            }
+
+            bindEvents() {
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('fileInput');
+                const splitBtn = document.getElementById('splitBtn');
+                const themeToggle = document.querySelector('.theme-toggle');
+
+                themeToggle.addEventListener('click', () => this.toggleTheme());
+                fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
+                uploadArea.addEventListener('click', () => fileInput.click());
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+                    uploadArea.addEventListener(event, (e) => this.handleDragEvents(e));
+                });
+
+                ['dragenter', 'dragover'].forEach(event => {
+                    document.addEventListener(event, e => e.preventDefault());
+                });
+
+                splitBtn.addEventListener('click', () => this.splitPDF());
+
+                // Split mode buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('mode-btn')) {
+                        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.splitMode = e.target.dataset.mode;
+                        this.updateSplitButton();
+                    }
+                });
+            }
+
+            handleDragEvents(e) {
+                const uploadArea = document.getElementById('uploadArea');
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (e.type === 'dragenter') {
+                    uploadArea.classList.add('dragover');
+                } else if (e.type === 'dragleave') {
+                    uploadArea.classList.remove('dragover');
+                } else if (e.type === 'drop') {
+                    uploadArea.classList.remove('dragover');
+                    this.handleFile(e.dataTransfer.files[0]);
+                }
+            }
+
+            async handleFile(file) {
+                if (!file || file.type !== 'application/pdf' || file.size > 50 * 1024 * 1024) {
+                    this.showMessage('Please select a valid PDF file (max 50MB).', 'error');
+                    return;
+                }
+
+                this.pdfFile = file;
+                const arrayBuffer = await file.arrayBuffer();
+                this.pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+
+                this.pages = this.pdfDoc.getPages();
+
+                document.getElementById('uploadArea').classList.add('has-file');
+                document.getElementById('uploadText').textContent = 'PDF loaded successfully';
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('totalPages').textContent = `Total: ${this.pages.length} pages`;
+
+                document.getElementById('pagesInfo').style.display = 'block';
+                document.getElementById('splitModeSelector').style.display = 'block';
+                document.getElementById('pagesList').innerHTML = '';
+
+                this.renderPagesList();
+                this.updateSplitButton();
+            }
+
+            renderPagesList() {
+                const container = document.getElementById('pagesList');
+                container.innerHTML = '';
+
+                this.pages.forEach((page, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'page-item';
+                    div.dataset.pageIndex = index;
+
+                    div.innerHTML = `
+                        <div class="page-info">
+                            <div class="page-thumbnail">${index + 1}</div>
+                            <div class="page-number">Page ${index + 1}</div>
+                        </div>
+                        <div class="page-actions">
+                            <label class="checkbox-container">
+                                <input type="checkbox" ${this.splitMode === 'all' ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    `;
+
+                    // Click to toggle selection
+                    div.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT') {
+                            const checkbox = div.querySelector('input');
+                            checkbox.checked = !checkbox.checked;
+                            this.togglePageSelection(index, checkbox.checked);
+                        }
+                    });
+
+                    container.appendChild(div);
+                });
+
+                // Add checkbox styles
+                if (!document.querySelector('.checkbox-container')) {
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .checkbox-container {
+                            display: flex;
+                            align-items: center;
+                            cursor: pointer;
+                        }
+                        .checkbox-container input {
+                            display: none;
+                        }
+                        .checkmark {
+                            width: 20px;
+                            height: 20px;
+                            border: 2px solid var(--border);
+                            border-radius: 4px;
+                            position: relative;
+                            transition: all 0.2s ease;
+                            margin-right: 0;
+                        }
+                        .checkbox-container input:checked ~ .checkmark {
+                            background: var(--primary-gradient);
+                            border-color: var(--primary);
+                        }
+                        .checkmark::after {
+                            content: '✓';
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%) scale(0);
+                            color: white;
+                            font-weight: bold;
+                            font-size: 12px;
+                            transition: transform 0.2s ease;
+                        }
+                        .checkbox-container input:checked ~ .checkmark::after {
+                            transform: translate(-50%, -50%) scale(1);
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+
+            togglePageSelection(index, selected) {
+                if (selected) {
+                    this.selectedPages.add(index);
+                } else {
+                    this.selectedPages.delete(index);
+                }
+                this.updateSplitButton();
+            }
+
+            updateSplitButton() {
+                const splitBtn = document.getElementById('splitBtn');
+                const hasValidSelection = this.splitMode === 'all' ||
+                    (this.splitMode === 'selected' && this.selectedPages.size > 0) ||
+                    this.splitMode === 'range';
+
+                splitBtn.disabled = !this.pdfDoc || !hasValidSelection;
+            }
+
+            async splitPDF() {
+                if (!this.pdfDoc) {
+                    this.showMessage('No PDF loaded.', 'error');
+                    return;
+                }
+
+                const btn = document.getElementById('splitBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Splitting...';
+                btn.disabled = true;
+
+                try {
+                    const zip = new JSZip();
+                    let outputFiles = [];
+
+                    if (this.splitMode === 'all') {
+                        // Split all pages
+                        for (let i = 0; i < this.pages.length; i++) {
+                            const newPdf = await PDFLib.PDFDocument.create();
+                            const [copiedPage] = await newPdf.copyPages(this.pdfDoc, [i]);
+                            newPdf.addPage(copiedPage);
+
+                            const pdfBytes = await newPdf.save();
+                            zip.file(`page_${i + 1}.pdf`, pdfBytes);
+                            outputFiles.push(`page_${i + 1}.pdf`);
+                        }
+                    } else if (this.splitMode === 'selected') {
+                        // Selected pages
+                        for (const pageIndex of this.selectedPages) {
+                            const newPdf = await PDFLib.PDFDocument.create();
+                            const [copiedPage] = await newPdf.copyPages(this.pdfDoc, [pageIndex]);
+                            newPdf.addPage(copiedPage);
+
+                            const pdfBytes = await newPdf.save();
+                            zip.file(`page_${pageIndex + 1}.pdf`, pdfBytes);
+                            outputFiles.push(`page_${pageIndex + 1}.pdf`);
+                        }
+                    }
+
+                    // Generate ZIP and download
+                    const zipBlob = await zip.generateAsync({ type: 'blob' });
+                    const url = URL.createObjectURL(zipBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `split_${this.pdfFile.name.replace('.pdf', '')}.zip`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    this.showMessage(`Split successful! Downloaded ${outputFiles.length} page(s) as ZIP.`, 'success');
+
+                } catch (error) {
+                    console.error('Split error:', error);
+                    this.showMessage('Split failed. Please try again.', 'error');
+                } finally {
+                    btn.innerHTML = '<i class="fas fa-cut"></i> Split PDF';
+                    btn.disabled = false;
+                }
+            }
+
+            showMessage(msg, type = 'success') {
+                const container = document.getElementById('messagesContainer');
+                const div = document.createElement('div');
+                div.className = `message ${type}`;
+                div.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
+                container.appendChild(div);
+                setTimeout(() => div.remove(), 5000);
+            }
+        }
+
+        // JSZip CDN for ZIP download
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+        script.onload = () => {
+            let app;
+            document.addEventListener('DOMContentLoaded', () => {
+                app = new PDFSplitter();
+            });
+        };
+        document.head.appendChild(script);
+    </script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+</body>
+
+</html>
