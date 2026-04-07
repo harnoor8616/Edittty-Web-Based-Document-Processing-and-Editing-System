@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF - PDFPRO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--primary:#6366f1;--primary-dark:#4f46e5;--secondary:#8b5cf6;--primary-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);--success:#10b981;--error:#ef4444;--bg-primary:#ffffff;--bg-secondary:#f8fafc;--text-primary:#1f2937;--text-secondary:#6b7280;--border:#e5e7eb;--shadow-sm:0 1px 2px 0 rgb(0 0 0 /.05);--shadow-md:0 10px 15px -3px rgb(0 0 0 /.1),0 4px 6px -4px rgb(0 0 0 /.1);--shadow-lg:0 20px 25px -5px rgb(0 0 0 /.1),0 8px 10px -6px rgb(0 0 0 /.1);--radius:12px;--radius-lg:20px}
+        [data-theme="dark"]{--bg-primary:#111827;--bg-secondary:#1f2937;--text-primary:#f9fafb;--text-secondary:#d1d5db;--border:#374151}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:var(--text-primary);background:var(--bg-secondary);transition:background-color .3s ease,color .3s ease}
+        .navbar{position:sticky;top:0;background:var(--bg-primary);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000}
+        .nav-container{max-width:1200px;margin:0 auto;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:1.5rem;font-weight:800;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+        .nav-links{display:flex;list-style:none;gap:2rem}
+        .nav-links a{text-decoration:none;color:var(--text-primary);font-weight:500;transition:color .2s ease}
+        .nav-links a:hover,.nav-links a.active{color:var(--primary)}
+        .theme-toggle{background:none;border:1px solid var(--border);color:var(--text-primary);padding:.5rem 1rem;border-radius:var(--radius);cursor:pointer;transition:all .2s ease}
+        .theme-toggle:hover{background:var(--primary-gradient);color:#fff;border-color:transparent}
+        .hero{text-align:center;padding:4rem 2rem;max-width:840px;margin:0 auto}
+        .hero h1{font-size:clamp(2.5rem,5vw,4rem);font-weight:800;margin-bottom:1rem;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-size:1.2rem;color:var(--text-secondary);margin-bottom:1.5rem;max-width:680px;margin-left:auto;margin-right:auto}
+        .hero-note{background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:1rem 1.25rem;color:var(--text-secondary);font-size:.95rem}
+        .upload-section,.details-section,.queue-section,.options-section,.messages-section,.action-section{max-width:800px;margin:0 auto 2rem;padding:0 2rem}
+        .upload-area,.details-card,.queue-card,.options-card{background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)}
+        .upload-area{border:3px dashed var(--border);padding:4rem 2rem;text-align:center;cursor:pointer;transition:all .3s ease}
+        .upload-area:hover,.upload-area.dragover,.upload-area.has-file{border-color:var(--primary);background:linear-gradient(135deg,var(--bg-primary) 0%,rgba(99,102,241,.05) 100%);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+        .upload-icon{font-size:4rem;color:var(--primary);margin-bottom:1rem}
+        .upload-text{font-size:1.25rem;font-weight:600;margin-bottom:.5rem}
+        .upload-subtext{color:var(--text-secondary)}
+        .details-card,.queue-card,.options-card{padding:1.5rem}
+        .section-heading{font-size:1.2rem;font-weight:700;margin-bottom:.3rem}
+        .section-subtext{color:var(--text-secondary);margin-bottom:1.25rem}
+        .stats-grid,.options-grid{display:grid;gap:1rem}
+        .stats-grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+        .options-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+        .stat-card,.option-card,.queue-item{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-primary);box-shadow:var(--shadow-sm)}
+        .stat-card,.option-card{padding:1rem}
+        .stat-card span,.option-card span{display:block;color:var(--text-secondary);font-size:.9rem;margin-bottom:.25rem}
+        .stat-card strong,.option-card strong{font-size:1rem;word-break:break-word}
+        .option-card label{display:block;font-weight:700;margin-bottom:.6rem}
+        .option-card input,.option-card select{width:100%;padding:.8rem .95rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-primary);color:var(--text-primary);font:inherit}
+        .option-card small{display:block;color:var(--text-secondary);margin-top:.6rem}
+        .queue-list{display:flex;flex-direction:column;gap:.9rem}
+        .queue-item{display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:center;padding:1rem}
+        .queue-thumb{width:56px;height:56px;border-radius:12px;object-fit:cover;background:var(--bg-secondary);border:1px solid var(--border)}
+        .queue-meta strong{display:block;margin-bottom:.2rem}
+        .queue-meta span{display:block;color:var(--text-secondary);font-size:.92rem}
+        .queue-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+        .queue-btn{border:1px solid var(--border);background:var(--bg-primary);color:var(--text-primary);border-radius:10px;padding:.55rem .8rem;cursor:pointer;transition:all .2s ease}
+        .queue-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .message{padding:1rem 1.5rem;border-radius:var(--radius);margin:1rem 0;font-weight:500;display:flex;align-items:center;gap:.75rem;border:1px solid transparent}
+        .message.success{background:rgba(16,185,129,.1);color:var(--success);border-color:rgba(16,185,129,.2)}
+        .message.error{background:rgba(239,68,68,.1);color:var(--error);border-color:rgba(239,68,68,.2)}
+        .message.info{background:rgba(99,102,241,.1);color:var(--primary-dark);border-color:rgba(99,102,241,.2)}
+        .action-section{text-align:center}
+        .convert-btn{background:var(--primary-gradient);color:#fff;border:none;padding:1.25rem 3rem;font-size:1.2rem;font-weight:600;border-radius:var(--radius-lg);cursor:pointer;box-shadow:var(--shadow-lg);transition:all .3s ease;min-width:240px}
+        .convert-btn:hover:not(:disabled){transform:translateY(-2px)}
+        .convert-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+        .footer{background:var(--bg-primary);border-top:1px solid var(--border);padding:3rem 2rem 2rem;text-align:center;color:var(--text-secondary);margin-top:3rem}
+        .footer-content{max-width:1200px;margin:0 auto}
+        .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1rem;flex-wrap:wrap}
+        .footer-links a{color:var(--text-secondary);text-decoration:none}
+        .footer-links a:hover{color:var(--primary)}
+        @media (max-width:768px){.nav-container,.upload-section,.details-section,.queue-section,.options-section,.messages-section,.action-section{padding-left:1rem;padding-right:1rem}.nav-links{display:none}.upload-area{padding:3rem 1.5rem}.queue-item{grid-template-columns:1fr;justify-items:start}.queue-actions{width:100%}.footer-links{flex-direction:column;gap:1rem}}
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">PDFPRO</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/merge.html">Merge PDF</a></li>
+                <li><a href="/split.html">Split PDF</a></li>
+                <li><a href="/compress.html">Compress PDF</a></li>
+                <li><a href="/image-to-pdf.html" class="active">Image to PDF</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Convert Images to PDF</h1>
+        <p>Upload multiple images, arrange them in the order you want, choose the page layout, and create one PDF instantly.</p>
+        <div class="hero-note">
+            This tool uses the same UI language as the other PDFPRO tools so the workflow feels consistent across the app.
+        </div>
+    </section>
+
+    <section class="upload-section">
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-file-pdf upload-icon"></i>
+            <div class="upload-text" id="uploadText">Drop your images here or click to browse</div>
+            <div class="upload-subtext">PNG, JPG, JPEG, WEBP, and other browser-supported images. Multiple files allowed.</div>
+            <input id="fileInput" type="file" accept="image/*" multiple hidden>
+        </div>
+    </section>
+
+    <section class="details-section" id="detailsPanel" style="display:none">
+        <div class="details-card">
+            <div class="section-heading">Upload Summary</div>
+            <div class="section-subtext">Check your current image set before turning it into a PDF.</div>
+            <div class="stats-grid">
+                <div class="stat-card"><span>Total Images</span><strong id="imageCount">0</strong></div>
+                <div class="stat-card"><span>Total Size</span><strong id="totalSize">0 B</strong></div>
+                <div class="stat-card"><span>First File</span><strong id="firstFile">-</strong></div>
+                <div class="stat-card"><span>Last Result</span><strong id="lastResult">No PDF created yet</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="queue-section" id="queueSection" style="display:none">
+        <div class="queue-card">
+            <div class="section-heading">Image Order</div>
+            <div class="section-subtext">The PDF pages will follow this order. Move items up or down before exporting.</div>
+            <div class="queue-list" id="queueList"></div>
+        </div>
+    </section>
+
+    <section class="options-section">
+        <div class="options-card">
+            <div class="section-heading">PDF Options</div>
+            <div class="section-subtext">Choose how the images should be placed on each PDF page.</div>
+            <div class="options-grid">
+                <div class="option-card">
+                    <label for="pageSizeSelect">Page Size</label>
+                    <select id="pageSizeSelect">
+                        <option value="image">Match image size</option>
+                        <option value="a4">A4</option>
+                        <option value="letter">Letter</option>
+                    </select>
+                    <small>Match image size keeps every page tight to the original image dimensions.</small>
+                </div>
+                <div class="option-card">
+                    <label for="orientationSelect">Orientation</label>
+                    <select id="orientationSelect">
+                        <option value="auto">Auto</option>
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                    <small>Auto switches page direction based on the image when using A4 or Letter.</small>
+                </div>
+                <div class="option-card">
+                    <label for="fitSelect">Image Fit</label>
+                    <select id="fitSelect">
+                        <option value="contain">Contain with margins</option>
+                        <option value="fill">Fill the page</option>
+                    </select>
+                    <small>Contain keeps the full image visible. Fill uses more of the page area.</small>
+                </div>
+                <div class="option-card">
+                    <label for="marginInput">Page Margin</label>
+                    <input id="marginInput" type="number" min="0" max="72" value="24">
+                    <small>Margin is measured in PDF points. 24 is a clean default.</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="messages-section" id="messagesContainer"></section>
+
+    <section class="action-section">
+        <button id="convertBtn" class="convert-btn" disabled>
+            <i class="fas fa-file-arrow-down"></i>
+            Create PDF
+        </button>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/about.html">About</a>
+                <a href="/privacy.html">Privacy</a>
+                <a href="/contact.html">Contact</a>
+            </div>
+            <p>&copy; 2026 PDFPRO. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="/js/image-to-pdf.js"></script>
+</body>
+
+</html>

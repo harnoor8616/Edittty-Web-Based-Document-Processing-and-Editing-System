@@ -127,6 +127,14 @@ app.get("/jpg-to-pdf.html", (req, res) => {
     res.sendFile(path.join(__dirname, "image-to-pdf.html"));
 });
 
+app.get("/rotate.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "rotate.html"));
+});
+
+app.get("/page-numbers.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "page-numbers.html"));
+});
+
 app.get("/about.html", (req, res) => {
     res.sendFile(path.join(__dirname, "about.html"));
 });
