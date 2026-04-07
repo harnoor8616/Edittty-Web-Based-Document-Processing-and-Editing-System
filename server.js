@@ -111,6 +111,22 @@ app.get("/split.html", (req, res) => {
     res.sendFile(path.join(__dirname, "split.html"));
 });
 
+app.get("/compress.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "compress.html"));
+});
+
+app.get("/pdf-to-image.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "pdf-to-image.html"));
+});
+
+app.get("/image-to-pdf.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "image-to-pdf.html"));
+});
+
+app.get("/jpg-to-pdf.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "image-to-pdf.html"));
+});
+
 app.get("/about.html", (req, res) => {
     res.sendFile(path.join(__dirname, "about.html"));
 });
