@@ -10,12 +10,13 @@ body {
     color: #333;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    background: #fff;
 }
 
 .container {
-    max-width: 1200px;
+    width: min(1200px, calc(100% - 2rem));
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0;
 }
 
 .navbar {
@@ -30,12 +31,13 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
+    width: min(1200px, calc(100% - 2rem));
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     height: 70px;
 }
 
@@ -57,6 +59,7 @@ body {
     display: flex;
     list-style: none;
     gap: 2rem;
+    align-items: center;
 }
 
 .nav-link {
@@ -121,9 +124,9 @@ body {
 }
 
 .hero-container {
-    max-width: 1200px;
+    width: min(1200px, calc(100% - 2rem));
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
@@ -191,8 +194,9 @@ body {
 }
 
 .pdf-mockup {
-    width: 300px;
-    height: 400px;
+    width: min(100%, 300px);
+    aspect-ratio: 3 / 4;
+    height: auto;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     backdrop-filter: blur(20px);
@@ -258,7 +262,7 @@ body {
 
 .tools-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 2rem;
     margin-bottom: 3rem;
 }
@@ -448,7 +452,7 @@ body {
 
 .footer-content {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
     gap: 3rem;
     margin-bottom: 2rem;
 }
@@ -710,6 +714,8 @@ body {
         transition: 0.3s;
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
         padding: 2rem 0;
+        z-index: 999;
+        gap: 1.25rem;
     }
 
     .nav-menu.active {
@@ -724,6 +730,10 @@ body {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 2rem;
+    }
+
+    .hero-image {
+        order: -1;
     }
 
     .hero-buttons {
@@ -742,6 +752,12 @@ body {
         gap: 2rem;
     }
 
+    .about-grid,
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
     .tool-container {
         padding: 2rem 1rem;
     }
@@ -752,13 +768,42 @@ body {
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 0 15px;
+    .container,
+    .nav-container,
+    .hero-container {
+        width: min(1200px, calc(100% - 1.5rem));
     }
 
     .hero {
         padding-top: 70px;
         min-height: calc(100vh - 70px);
+    }
+
+    .hero-title,
+    .section-title,
+    .cta h2 {
+        line-height: 1.15;
+    }
+
+    .btn,
+    .btn-large {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .stats-grid,
+    .contact-grid,
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .faq-question {
+        padding: 1.2rem 1rem;
+        gap: 1rem;
+    }
+
+    .faq-answer p {
+        padding: 0 1rem 1.2rem;
     }
 }
 
@@ -840,8 +885,9 @@ body {
 }
 
 .about-box {
-    width: 300px;
-    height: 400px;
+    width: min(100%, 300px);
+    aspect-ratio: 3 / 4;
+    height: auto;
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
     border-radius: 24px;
     margin: 0 auto;
@@ -884,9 +930,10 @@ body {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     text-align: center;
     align-items: center;
+    gap: 1.5rem;
 }
 
 /* Each item */
@@ -971,20 +1018,17 @@ body {
 }
 
 .contact-grid {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    justify-content: initial;
     align-items: stretch;
-
-    flex-wrap: nowrap;
-    /* IMPORTANT: keeps everything in one line */
-    overflow-x: auto;
-    /* allows scroll on small screens instead of breaking */
+    flex-wrap: initial;
+    overflow-x: visible;
 }
 
 .contact-card {
-    min-width: fit-content;
-    /* ensures uniform size */
-    flex: 1;
+    min-width: 0;
+    flex: initial;
 }
 
 /* .hero .btn-primary {

@@ -5,9 +5,15 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs/promises");
+const fsSync = require("fs");
+const os = require("os");
+const crypto = require("crypto");
+const { execFile } = require("child_process");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PYTHON_BIN = resolvePythonBin();
 
 function timestamp() {
     return new Date().toLocaleString("en-US", { hour12: false });
@@ -42,6 +48,24 @@ function sendError(res, statusCode, message, error = null) {
     }
 
     return res.status(statusCode).json(payload);
+}
+
+function resolvePythonBin() {
+    const candidates = [
+        process.env.PYTHON_BIN,
+        "C:\\Users\\DC\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "python"
+    ].filter(Boolean);
+
+    for (const candidate of candidates) {
+        try {
+            if (candidate === "python" || fsSync.existsSync(candidate)) {
+                return candidate;
+            }
+        } catch (_) {}
+    }
+
+    return "python";
 }
 
 function normalizeLogPayload(body = {}) {
@@ -135,8 +159,55 @@ app.get("/page-numbers.html", (req, res) => {
     res.sendFile(path.join(__dirname, "page-numbers.html"));
 });
 
+app.get("/extract-text.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "extract-text.html"));
+});
+
+app.get("/protect.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "protect.html"));
+});
+
 app.get("/about.html", (req, res) => {
     res.sendFile(path.join(__dirname, "about.html"));
+});
+
+app.post("/api/protect-pdf", express.raw({ type: "application/pdf", limit: "60mb" }), async (req, res) => {
+    const password = typeof req.query.password === "string" ? req.query.password : "";
+    let tempDir;
+
+    try {
+        if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+            return sendError(res, 400, "Upload a PDF file to protect.");
+        }
+
+        if (!password.trim()) {
+            return sendError(res, 400, "Password is required.");
+        }
+
+        if (password.length < 4) {
+            return sendError(res, 400, "Password must be at least 4 characters long.");
+        }
+
+        tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pdfpro-protect-"));
+        const inputPath = path.join(tempDir, `${crypto.randomUUID()}-input.pdf`);
+        const outputPath = path.join(tempDir, `${crypto.randomUUID()}-protected.pdf`);
+        const scriptPath = path.join(__dirname, "protect-pdf.py");
+
+        await fs.writeFile(inputPath, req.body);
+        await runPythonProtect(scriptPath, inputPath, outputPath, password);
+
+        const outputBuffer = await fs.readFile(outputPath);
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", 'attachment; filename="protected.pdf"');
+        return res.send(outputBuffer);
+    } catch (error) {
+        logError("❌ PDF protection failed:", error);
+        return sendError(res, 500, "Unable to protect the PDF.", error.message);
+    } finally {
+        if (tempDir) {
+            await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
+        }
+    }
 });
 
 app.get("/privacy.html", (req, res) => {
@@ -265,6 +336,24 @@ async function startServer(port = PORT) {
             logInfo(`🚀 Server running on http://localhost:${port}`);
             resolve(server);
         });
+    });
+}
+
+function runPythonProtect(scriptPath, inputPath, outputPath, password) {
+    return new Promise((resolve, reject) => {
+        execFile(
+            PYTHON_BIN,
+            [scriptPath, inputPath, outputPath, password],
+            { windowsHide: true },
+            (error, stdout, stderr) => {
+                if (error) {
+                    reject(new Error(stderr?.trim() || stdout?.trim() || error.message));
+                    return;
+                }
+
+                resolve(stdout);
+            }
+        );
     });
 }
 
