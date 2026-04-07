@@ -333,6 +333,12 @@
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
+        .message.info {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-dark);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -521,11 +527,10 @@
                 this.pdfDoc = null;
                 this.pages = [];
                 this.selectedPages = new Set();
+                this.activeMessage = null;
                 this.splitMode = 'all'; // 'all', 'range', 'selected'
                 this.initTheme();
                 this.bindEvents();
-                PDFLib.PDFDocument.load()
-                PDFLib.PDFDocument.create()
             }
 
             initTheme() {
@@ -608,23 +613,35 @@
                     return;
                 }
 
-                this.pdfFile = file;
-                const arrayBuffer = await file.arrayBuffer();
-                this.pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                try {
+                    this.showMessage('Loading PDF...', 'info');
+                    this.pdfFile = file;
+                    const arrayBuffer = await file.arrayBuffer();
+                    this.pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                    this.pages = this.pdfDoc.getPages();
+                    this.selectedPages = new Set();
 
-                this.pages = this.pdfDoc.getPages();
+                    document.getElementById('uploadArea').classList.add('has-file');
+                    document.getElementById('uploadText').textContent = 'PDF loaded successfully';
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('totalPages').textContent = `Total: ${this.pages.length} pages`;
 
-                document.getElementById('uploadArea').classList.add('has-file');
-                document.getElementById('uploadText').textContent = 'PDF loaded successfully';
-                document.getElementById('fileName').textContent = file.name;
-                document.getElementById('totalPages').textContent = `Total: ${this.pages.length} pages`;
+                    document.getElementById('pagesInfo').style.display = 'block';
+                    document.getElementById('splitModeSelector').style.display = 'block';
+                    document.getElementById('pagesList').innerHTML = '';
 
-                document.getElementById('pagesInfo').style.display = 'block';
-                document.getElementById('splitModeSelector').style.display = 'block';
-                document.getElementById('pagesList').innerHTML = '';
-
-                this.renderPagesList();
-                this.updateSplitButton();
+                    this.renderPagesList();
+                    this.updateSplitButton();
+                    this.showMessage(`Loaded ${file.name} with ${this.pages.length} page(s).`, 'success');
+                } catch (error) {
+                    console.error('PDF load error:', error);
+                    this.pdfFile = null;
+                    this.pdfDoc = null;
+                    this.pages = [];
+                    this.selectedPages = new Set();
+                    this.updateSplitButton();
+                    this.showMessage(`Failed to load PDF: ${getReadableErrorMessage(error)}`, 'error');
+                }
             }
 
             renderPagesList() {
@@ -651,12 +668,30 @@
 
                     // Click to toggle selection
                     div.addEventListener('click', (e) => {
-                        if (e.target.tagName !== 'INPUT') {
-                            const checkbox = div.querySelector('input');
-                            checkbox.checked = !checkbox.checked;
-                            this.togglePageSelection(index, checkbox.checked);
+                        if (this.splitMode === 'all') {
+                            return;
                         }
+
+                        const checkbox = div.querySelector('input');
+                        if (e.target.tagName !== 'INPUT') {
+                            checkbox.checked = !checkbox.checked;
+                        }
+                        this.togglePageSelection(index, checkbox.checked);
                     });
+
+                    const checkbox = div.querySelector('input');
+                    checkbox.addEventListener('change', () => {
+                        if (this.splitMode === 'all') {
+                            checkbox.checked = true;
+                            return;
+                        }
+                        this.togglePageSelection(index, checkbox.checked);
+                    });
+
+                    if (this.splitMode === 'selected' && this.selectedPages.has(index)) {
+                        div.classList.add('selected');
+                        checkbox.checked = true;
+                    }
 
                     container.appendChild(div);
                 });
@@ -706,10 +741,15 @@
             }
 
             togglePageSelection(index, selected) {
+                const pageItem = document.querySelector(`[data-page-index="${index}"]`);
                 if (selected) {
                     this.selectedPages.add(index);
                 } else {
                     this.selectedPages.delete(index);
+                }
+
+                if (pageItem) {
+                    pageItem.classList.toggle('selected', selected);
                 }
                 this.updateSplitButton();
             }
@@ -732,10 +772,15 @@
                 const btn = document.getElementById('splitBtn');
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Splitting...';
                 btn.disabled = true;
+                btn.classList.add('loading');
+                this.showMessage('Splitting your PDF. Please wait...', 'info');
+
+                const startTime = performance.now();
 
                 try {
                     const zip = new JSZip();
                     let outputFiles = [];
+                    let totalOutputBytes = 0;
 
                     if (this.splitMode === 'all') {
                         // Split all pages
@@ -747,6 +792,7 @@
                             const pdfBytes = await newPdf.save();
                             zip.file(`page_${i + 1}.pdf`, pdfBytes);
                             outputFiles.push(`page_${i + 1}.pdf`);
+                            totalOutputBytes += pdfBytes.length;
                         }
                     } else if (this.splitMode === 'selected') {
                         // Selected pages
@@ -758,7 +804,14 @@
                             const pdfBytes = await newPdf.save();
                             zip.file(`page_${pageIndex + 1}.pdf`, pdfBytes);
                             outputFiles.push(`page_${pageIndex + 1}.pdf`);
+                            totalOutputBytes += pdfBytes.length;
                         }
+                    } else {
+                        throw new Error('Custom page range is not implemented yet. Use "All pages" or "Selected pages only".');
+                    }
+
+                    if (outputFiles.length === 0) {
+                        throw new Error('No pages selected to split.');
                     }
 
                     // Generate ZIP and download
@@ -772,25 +825,153 @@
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
 
-                    this.showMessage(`Split successful! Downloaded ${outputFiles.length} page(s) as ZIP.`, 'success');
+                    const endTime = performance.now();
+                    this.showMessage(`Split successful! Downloaded ${outputFiles.length} page(s) as ZIP. Saving activity log...`, 'info');
+
+                    try {
+                        const logResult = await logOperation({
+                            operation: "SPLIT",
+                            input_files: [this.pdfFile.name],
+                            output_file: `split_${this.pdfFile.name.replace('.pdf', '')}.zip`,
+                            total_input_size: Math.round(this.pdfFile.size / 1024),
+                            output_size: Math.round(zipBlob.size / 1024),
+                            processing_time: ((endTime - startTime) / 1000).toFixed(2),
+                            status: "SUCCESS",
+                            error_message: null,
+                            device_info: navigator.userAgent
+                        });
+                        this.showMessage(`Split successful. Log saved with ID ${logResult.id}.`, 'success');
+                    } catch (logError) {
+                        console.error('Split log save failed:', logError);
+                        this.showMessage(`Split successful, but log was not saved: ${getReadableErrorMessage(logError)}`, 'error');
+                    }
 
                 } catch (error) {
                     console.error('Split error:', error);
-                    this.showMessage('Split failed. Please try again.', 'error');
+                    try {
+                        await logOperation({
+                            operation: "SPLIT",
+                            input_files: this.pdfFile ? [this.pdfFile.name] : [],
+                            output_file: null,
+                            total_input_size: this.pdfFile ? Math.round(this.pdfFile.size / 1024) : 0,
+                            output_size: 0,
+                            processing_time: 0,
+                            status: "FAILED",
+                            error_message: error.message,
+                            device_info: navigator.userAgent
+                        });
+                    } catch (logError) {
+                        console.error('Failed to save split error log:', logError);
+                    }
+
+                    this.showMessage(`Split failed: ${getReadableErrorMessage(error)}`, 'error');
                 } finally {
                     btn.innerHTML = '<i class="fas fa-cut"></i> Split PDF';
                     btn.disabled = false;
+                    btn.classList.remove('loading');
                 }
             }
 
             showMessage(msg, type = 'success') {
                 const container = document.getElementById('messagesContainer');
+                if (this.activeMessage) {
+                    this.activeMessage.remove();
+                }
+
                 const div = document.createElement('div');
                 div.className = `message ${type}`;
-                div.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
+                const iconName = type === 'success'
+                    ? 'check-circle'
+                    : type === 'info'
+                        ? 'info-circle'
+                        : 'exclamation-circle';
+                div.innerHTML = `<i class="fas fa-${iconName}"></i> ${msg}`;
                 container.appendChild(div);
-                setTimeout(() => div.remove(), 5000);
+                this.activeMessage = div;
+
+                if (type !== 'info') {
+                    setTimeout(() => {
+                        if (this.activeMessage === div) {
+                            div.remove();
+                            this.activeMessage = null;
+                        }
+                    }, 5000);
+                }
             }
+        }
+
+        function getApiCandidates() {
+            const candidates = [];
+            const isHttp = window.location.protocol === "http:" || window.location.protocol === "https:";
+
+            if (isHttp) {
+                candidates.push(window.location.origin);
+            }
+
+            candidates.push("http://127.0.0.1:3000");
+            candidates.push("http://localhost:3000");
+
+            return [...new Set(candidates)];
+        }
+
+        async function logOperation(data) {
+            console.log("[PDFPRO] Sending split log payload:", data);
+
+            const errors = [];
+
+            for (const baseUrl of getApiCandidates()) {
+                try {
+                    console.log(`[PDFPRO] Trying log endpoint: ${baseUrl}/log`);
+
+                    const response = await fetch(`${baseUrl}/log`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json().catch(() => null);
+
+                    if (!response.ok) {
+                        const message = result?.message || result?.error || `Request failed with status ${response.status}`;
+                        console.error("[PDFPRO] Split log request failed:", {
+                            url: `${baseUrl}/log`,
+                            status: response.status,
+                            statusText: response.statusText,
+                            body: result
+                        });
+                        errors.push(`${baseUrl}/log -> ${message}`);
+                        continue;
+                    }
+
+                    console.log("[PDFPRO] Split log saved successfully:", {
+                        url: `${baseUrl}/log`,
+                        result
+                    });
+                    return result;
+                } catch (error) {
+                    console.error("[PDFPRO] Split log request error:", {
+                        url: `${baseUrl}/log`,
+                        error
+                    });
+                    errors.push(`${baseUrl}/log -> ${error.message}`);
+                }
+            }
+
+            throw new Error(errors.join(" | "));
+        }
+
+        function getReadableErrorMessage(error) {
+            if (!error) {
+                return "Unknown error.";
+            }
+
+            if (error.name === "TypeError") {
+                return "Could not reach the server. Make sure the backend is running on port 3000.";
+            }
+
+            return error.message || "Unexpected error.";
         }
 
         // JSZip CDN for ZIP download

@@ -1,0 +1,30 @@
+{
+  "name": "edittty-web-based-document-processing-and-editing-system",
+  "version": "1.0.0",
+  "description": "**PDFPRO — Web-Based Document Processing and Editing System**",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "smoke:log": "node smoke-test-log.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harnoor8616/Edittty-Web-Based-Document-Processing-and-Editing-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/harnoor8616/Edittty-Web-Based-Document-Processing-and-Editing-System/issues"
+  },
+  "homepage": "https://github.com/harnoor8616/Edittty-Web-Based-Document-Processing-and-Editing-System#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1",
+    "mysql2": "^3.20.0"
+  }
+}

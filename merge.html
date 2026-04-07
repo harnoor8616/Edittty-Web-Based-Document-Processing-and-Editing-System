@@ -417,6 +417,12 @@
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
+        .message.info {
+            background: rgba(99, 102, 241, 0.1);
+            color: #4f46e5;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -579,11 +585,12 @@
         class PDFMerger {
             constructor() {
                 this.files = [];
+                this.activeMessage = null;
                 this.initTheme();
                 this.bindEvents();
                 this.updateUI();
             }
-
+            
             /* ================= THEME SYSTEM ================= */
             initTheme() {
                 const savedTheme = localStorage.getItem('theme');
@@ -732,12 +739,24 @@
 
             showMessage(msg, type = 'success') {
                 const container = document.getElementById('messagesContainer');
+                if (this.activeMessage) {
+                    this.activeMessage.remove();
+                }
+
                 const div = document.createElement('div');
                 div.className = `message ${type}`;
                 div.innerText = msg;
                 container.appendChild(div);
+                this.activeMessage = div;
 
-                setTimeout(() => div.remove(), 4000);
+                if (type !== 'info') {
+                    setTimeout(() => {
+                        if (this.activeMessage === div) {
+                            div.remove();
+                            this.activeMessage = null;
+                        }
+                    }, 5000);
+                }
             }
 
             /* ================= FILE ACTIONS ================= */
@@ -768,43 +787,171 @@
                 const btn = document.getElementById('mergeBtn');
                 btn.textContent = 'Merging...';
                 btn.disabled = true;
+                btn.classList.add('loading');
+                this.showMessage('Merging your PDF files. Please wait...', 'info');
+
+                const startTime = performance.now();
 
                 try {
                     const merged = await PDFLib.PDFDocument.create();
+
+                    let totalInputSize = 0;
+                    let inputFileNames = [];
 
                     for (const f of this.files) {
                         const pdf = await PDFLib.PDFDocument.load(await f.file.arrayBuffer());
                         const pages = await merged.copyPages(pdf, pdf.getPageIndices());
                         pages.forEach(p => merged.addPage(p));
+
+                        totalInputSize += f.file.size;
+                        inputFileNames.push(f.name);
                     }
 
                     const bytes = await merged.save();
                     const blob = new Blob([bytes], { type: 'application/pdf' });
 
+                    const endTime = performance.now();
+
+                    // Download
                     const link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
                     link.download = 'merged.pdf';
                     link.click();
+                    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 
-                    this.showMessage('Merge successful!');
+                    this.showMessage('PDFs merged successfully. Saving activity log...', 'info');
+
+                    try {
+                        const logResult = await logOperation({
+                        operation: "MERGE",
+                        input_files: inputFileNames,
+                        output_file: "merged.pdf",
+                        total_input_size: Math.round(totalInputSize / 1024), // KB
+                        output_size: Math.round(blob.size / 1024), // KB
+                        processing_time: ((endTime - startTime) / 1000).toFixed(2),
+                        status: "SUCCESS",
+                        error_message: null,
+                        device_info: navigator.userAgent
+                    });
+                        this.showMessage(`Merge successful. Log saved with ID ${logResult.id}.`, 'success');
+                    } catch (logError) {
+                        console.error("Log save failed:", logError);
+                        this.showMessage(`PDF merged, but log was not saved: ${getReadableErrorMessage(logError)}`, 'error');
+                    }
+
                     this.files = [];
                     this.renderFilesList();
                     this.updateUI();
 
                 } catch (err) {
-                    this.showMessage('Merge failed!', 'error');
+                    console.error("Merge failed:", err);
+
+                    // ❌ ERROR LOG
+                    try {
+                        await logOperation({
+                            operation: "MERGE",
+                            input_files: this.files.map(f => f.name),
+                            output_file: null,
+                            total_input_size: 0,
+                            output_size: 0,
+                            processing_time: 0,
+                            status: "FAILED",
+                            error_message: err.message,
+                            device_info: navigator.userAgent
+                        });
+                    } catch (logError) {
+                        console.error("Failed to save error log:", logError);
+                    }
+
+                    this.showMessage(`Merge failed: ${getReadableErrorMessage(err)}`, 'error');
                 }
 
                 btn.textContent = 'Merge PDFs';
                 btn.disabled = false;
+                btn.classList.remove('loading');
             }
-        }
+            }
+        
 
         /* ================= INIT ================= */
         let app;
         document.addEventListener('DOMContentLoaded', () => {
             app = new PDFMerger();
         });
+
+        function getApiCandidates() {
+            const candidates = [];
+            const isHttp = window.location.protocol === "http:" || window.location.protocol === "https:";
+
+            if (isHttp) {
+                candidates.push(window.location.origin);
+            }
+
+            candidates.push("http://127.0.0.1:3000");
+            candidates.push("http://localhost:3000");
+
+            return [...new Set(candidates)];
+        }
+
+        async function logOperation(data) {
+            console.log("[PDFPRO] Sending log payload:", data);
+
+            const errors = [];
+
+            for (const baseUrl of getApiCandidates()) {
+                try {
+                    console.log(`[PDFPRO] Trying log endpoint: ${baseUrl}/log`);
+
+                    const response = await fetch(`${baseUrl}/log`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json().catch(() => null);
+
+                    if (!response.ok) {
+                        const message = result?.message || result?.error || `Request failed with status ${response.status}`;
+                        console.error("[PDFPRO] Log request failed:", {
+                            url: `${baseUrl}/log`,
+                            status: response.status,
+                            statusText: response.statusText,
+                            body: result
+                        });
+                        errors.push(`${baseUrl}/log -> ${message}`);
+                        continue;
+                    }
+
+                    console.log("[PDFPRO] Log saved successfully:", {
+                        url: `${baseUrl}/log`,
+                        result
+                    });
+                    return result;
+                } catch (error) {
+                    console.error("[PDFPRO] Log request error:", {
+                        url: `${baseUrl}/log`,
+                        error
+                    });
+                    errors.push(`${baseUrl}/log -> ${error.message}`);
+                }
+            }
+
+            throw new Error(errors.join(" | "));
+        }
+
+        function getReadableErrorMessage(error) {
+            if (!error) {
+                return "Unknown error.";
+            }
+
+            if (error.name === "TypeError") {
+                return "Could not reach the server. Make sure the backend is running on port 3000.";
+            }
+
+            return error.message || "Unexpected error.";
+        }
     </script>
 
 </body>
