@@ -8,12 +8,12 @@
 
 The primary objectives of **PDFPRO** are:
 
-* To provide a fast and responsive PDF editing platform
-* To enable browser-based document processing without external dependencies
-* To ensure ease of use through a clean and intuitive interface
-* To maintain user privacy by minimizing server-side interactions
+- To provide a fast and responsive PDF editing platform
+- To enable browser-based document processing without external dependencies
+- To ensure ease of use through a clean and intuitive interface
+- To maintain user privacy by minimizing server-side interactions
 
- **3. System Overview**
+  **3. System Overview**
 
 **PDFPRO** operates entirely on the client side, allowing users to upload, modify, and download PDF documents in real time. The system focuses on delivering core editing functionalities while ensuring optimal speed, responsiveness, and minimal resource consumption.
 
@@ -21,30 +21,30 @@ The primary objectives of **PDFPRO** are:
 
 **4.1 Document Handling**
 
-* Upload PDF files directly from the local system
-* Efficient rendering of documents within the browser
-* Instant download of edited files
+- Upload PDF files directly from the local system
+- Efficient rendering of documents within the browser
+- Instant download of edited files
 
 **4.2 Editing and Annotation**
 
-* Addition of text elements to PDF pages
-* Highlighting and annotation of content
-* Basic document modification capabilities
+- Addition of text elements to PDF pages
+- Highlighting and annotation of content
+- Basic document modification capabilities
 
 **4.3 Performance**
 
-* Lightweight architecture ensuring fast execution
-* Minimal loading time with smooth user interaction
+- Lightweight architecture ensuring fast execution
+- Minimal loading time with smooth user interaction
 
 **4.4 Accessibility**
 
-* No installation or configuration required
-* Cross-platform compatibility (desktop and mobile browsers)
+- No installation or configuration required
+- Cross-platform compatibility (desktop and mobile browsers)
 
 **4.5 User Interface**
 
-* Clean and structured layout
-* Focus on usability, clarity, and user experience
+- Clean and structured layout
+- Focus on usability, clarity, and user experience
 
 **5. Technology Stack**
 
@@ -58,85 +58,119 @@ The primary objectives of **PDFPRO** are:
 
 The system follows a **client-side architecture**, where:
 
-* All processing occurs within the user’s browser
-* No mandatory backend communication is required
-* PDF rendering and editing are managed using JavaScript libraries
+- All processing occurs within the user’s browser
+- No mandatory backend communication is required
+- PDF rendering and editing are managed using JavaScript libraries
 
- **7. Installation and Setup**
+  **7. Installation and Setup**
 
 The project does not require complex installation procedures.
 
 **Steps**
 
-1. Clone the repository:
+**Option 1: Easiest Review**
+Open the live project here:
+[https://harnoor8616.github.io/Edittty-Web-Based-Document-Processing-and-Editing-System/](https://harnoor8616.github.io/Edittty-Web-Based-Document-Processing-and-Editing-System/)
 
-   git clone https://github.com/your-username/pdfpro.git
+**Option 2: Run Locally**
 
+1. Install `Node.js`
+2. Install `MySQL`
+3. Clone the repository:
 
-2. Navigate to the project directory:
+git clone https://github.com/harnoor8616/Edittty-Web-Based-Document-Processing-and-Editing-System.git
+cd Edittty-Web-Based-Document-Processing-and-Editing-System
 
-   cd pdfpro
+4. Install dependencies:
 
-3. Open the application:
+npm install
 
-   index.html
+5. Create a MySQL database named `PDFPRO`
 
- **8. Use Cases**
+6. Create the `logs` table:
+   sql
+   USE PDFPRO;
 
-* Academic document annotation
-* Quick editing of professional PDF files
-* Lightweight alternative to traditional desktop PDF software
-* Browser-based document review and processing
+CREATE TABLE logs (
+id INT AUTO_INCREMENT PRIMARY KEY,
+operation VARCHAR(100) NOT NULL,
+input_files JSON NOT NULL,
+output_file VARCHAR(255) NULL,
+total_input_size INT NOT NULL DEFAULT 0,
+output_size INT NOT NULL DEFAULT 0,
+processing_time DECIMAL(10,2) NOT NULL DEFAULT 0,
+status ENUM('SUCCESS','FAILED') NOT NULL,
+error_message TEXT NULL,
+user_ip VARCHAR(64) NULL,
+device_info TEXT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
- **9. Advantages**
+7. Create a `.env` file in the root folder:
 
-* Fast and efficient processing
-* No installation overhead
-* User-friendly and intuitive interface
-* Enhanced privacy through local file processing
+.env
+DB_HOST=localhost
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=PDFPRO
+PORT=3000
 
+8. Start the server:
 
+node server.js
 
- **10. Limitations**
+9. Open this in browser:
 
-* Limited advanced editing features compared to full-scale desktop tools
-* Performance dependent on browser capabilities
-* No cloud storage integration in the current version
+http://localhost:3000
 
+**8. Use Cases**
 
+- Academic document annotation
+- Quick editing of professional PDF files
+- Lightweight alternative to traditional desktop PDF software
+- Browser-based document review and processing
 
- **11. Future Scope**
+  **9. Advantages**
 
-* Implementation of PDF merging and splitting functionalities
-* Addition of compression features
-* Integration with cloud storage platforms
-* Advanced annotation and editing tools
-* Enhanced dark mode and UI customization
+- Fast and efficient processing
+- No installation overhead
+- User-friendly and intuitive interface
+- Enhanced privacy through local file processing
 
+  **10. Limitations**
+
+- Limited advanced editing features compared to full-scale desktop tools
+- Performance dependent on browser capabilities
+- No cloud storage integration in the current version
+
+  **11. Future Scope**
+
+- Implementation of PDF merging and splitting functionalities
+- Addition of compression features
+- Integration with cloud storage platforms
+- Advanced annotation and editing tools
+- Enhanced dark mode and UI customization
 
 **12. Security and Privacy**
 
 **PDFPRO** ensures user data privacy through:
 
-* Local processing of files within the browser
-* Minimal or no server-side interaction
-* No permanent storage of user documents
+- Local processing of files within the browser
+- Minimal or no server-side interaction
+- No permanent storage of user documents
 
 **13. Contribution Guidelines**
 
 Contributions are encouraged to enhance the system.
 
-* Fork the repository
-* Implement the required changes
-* Submit a pull request with appropriate documentation
+- Fork the repository
+- Implement the required changes
+- Submit a pull request with appropriate documentation
 
-
-
- **14. License**
+  **14. License**
 
 This project is distributed under the **MIT License**.
 
 **15. Conclusion**
 
 **PDFPRO** provides a streamlined and efficient solution for PDF editing by leveraging modern web technologies. Its lightweight, browser-based design makes it a practical and accessible tool for users seeking quick and effective document processing without the complexity of traditional software solutions.
-
