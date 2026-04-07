@@ -106,6 +106,22 @@ app.get("/index.html", (req, res) => {
 app.get("/merge.html", (req, res) => {
     res.sendFile(path.join(__dirname, "merge.html"));
 });
+
+app.get("/split.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "split.html"));
+});
+
+app.get("/about.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "about.html"));
+});
+
+app.get("/privacy.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "privacy.html"));
+});
+
+app.get("/contact.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "contact.html"));
+});
 // ================= LOG API =================
 app.post("/log", (req, res) => {
     logInfo("📩 Incoming log payload:", req.body);

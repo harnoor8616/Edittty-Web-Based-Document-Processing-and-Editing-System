@@ -309,6 +309,37 @@
             color: white;
         }
 
+        .range-input-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .range-input-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .range-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .range-help {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
         /* Messages */
         .message {
             padding: 1rem 1.5rem;
@@ -495,6 +526,17 @@
             </div>
         </div>
 
+        <div class="range-input-section" id="rangeInputSection" style="display: none;">
+            <label class="range-input-label" for="rangeInput">Page range</label>
+            <input
+                type="text"
+                id="rangeInput"
+                class="range-input"
+                placeholder="Example: 1-3,5,8-10"
+            >
+            <div class="range-help">Use commas to separate pages or ranges. Example: `1-3,5,8-10`</div>
+        </div>
+
         <!-- Pages List -->
         <div class="pages-list" id="pagesList"></div>
     </div>
@@ -513,6 +555,11 @@
     <!-- Footer -->
     <footer class="footer">
         <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <a href="/" style="color: var(--text-secondary); text-decoration: none;">Home</a>
+                <a href="/privacy.html" style="color: var(--text-secondary); text-decoration: none;">Privacy</a>
+                <a href="/contact.html" style="color: var(--text-secondary); text-decoration: none;">Contact</a>
+            </div>
             <p>&copy; 2026 PDFPRO. All rights reserved.</p>
         </div>
     </footer>
@@ -528,6 +575,7 @@
                 this.pages = [];
                 this.selectedPages = new Set();
                 this.activeMessage = null;
+                this.rangeInputValue = '';
                 this.splitMode = 'all'; // 'all', 'range', 'selected'
                 this.initTheme();
                 this.bindEvents();
@@ -566,10 +614,15 @@
                 const fileInput = document.getElementById('fileInput');
                 const splitBtn = document.getElementById('splitBtn');
                 const themeToggle = document.querySelector('.theme-toggle');
+                const rangeInput = document.getElementById('rangeInput');
 
                 themeToggle.addEventListener('click', () => this.toggleTheme());
                 fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
                 uploadArea.addEventListener('click', () => fileInput.click());
+                rangeInput.addEventListener('input', (e) => {
+                    this.rangeInputValue = e.target.value.trim();
+                    this.updateSplitButton();
+                });
 
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
                     uploadArea.addEventListener(event, (e) => this.handleDragEvents(e));
@@ -587,6 +640,8 @@
                         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
                         e.target.classList.add('active');
                         this.splitMode = e.target.dataset.mode;
+                        this.updateModeUI();
+                        this.renderPagesList();
                         this.updateSplitButton();
                     }
                 });
@@ -620,6 +675,8 @@
                     this.pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
                     this.pages = this.pdfDoc.getPages();
                     this.selectedPages = new Set();
+                    this.rangeInputValue = '';
+                    document.getElementById('rangeInput').value = '';
 
                     document.getElementById('uploadArea').classList.add('has-file');
                     document.getElementById('uploadText').textContent = 'PDF loaded successfully';
@@ -630,6 +687,7 @@
                     document.getElementById('splitModeSelector').style.display = 'block';
                     document.getElementById('pagesList').innerHTML = '';
 
+                    this.updateModeUI();
                     this.renderPagesList();
                     this.updateSplitButton();
                     this.showMessage(`Loaded ${file.name} with ${this.pages.length} page(s).`, 'success');
@@ -660,7 +718,7 @@
                         </div>
                         <div class="page-actions">
                             <label class="checkbox-container">
-                                <input type="checkbox" ${this.splitMode === 'all' ? 'checked' : ''}>
+                                <input type="checkbox" ${this.splitMode === 'all' ? 'checked' : ''} ${this.splitMode === 'range' ? 'disabled' : ''}>
                                 <span class="checkmark"></span>
                             </label>
                         </div>
@@ -668,7 +726,7 @@
 
                     // Click to toggle selection
                     div.addEventListener('click', (e) => {
-                        if (this.splitMode === 'all') {
+                        if (this.splitMode === 'all' || this.splitMode === 'range') {
                             return;
                         }
 
@@ -681,7 +739,7 @@
 
                     const checkbox = div.querySelector('input');
                     checkbox.addEventListener('change', () => {
-                        if (this.splitMode === 'all') {
+                        if (this.splitMode === 'all' || this.splitMode === 'range') {
                             checkbox.checked = true;
                             return;
                         }
@@ -740,6 +798,14 @@
                 }
             }
 
+            updateModeUI() {
+                const rangeSection = document.getElementById('rangeInputSection');
+                const pagesList = document.getElementById('pagesList');
+
+                rangeSection.style.display = this.splitMode === 'range' ? 'block' : 'none';
+                pagesList.style.opacity = this.splitMode === 'range' ? '0.7' : '1';
+            }
+
             togglePageSelection(index, selected) {
                 const pageItem = document.querySelector(`[data-page-index="${index}"]`);
                 if (selected) {
@@ -756,11 +822,79 @@
 
             updateSplitButton() {
                 const splitBtn = document.getElementById('splitBtn');
+                const rangePages = this.splitMode === 'range' ? this.parsePageRanges(false) : [];
                 const hasValidSelection = this.splitMode === 'all' ||
                     (this.splitMode === 'selected' && this.selectedPages.size > 0) ||
-                    this.splitMode === 'range';
+                    (this.splitMode === 'range' && rangePages.length > 0);
 
                 splitBtn.disabled = !this.pdfDoc || !hasValidSelection;
+            }
+
+            parsePageRanges(throwOnError = true) {
+                const input = this.rangeInputValue;
+
+                if (!input) {
+                    if (throwOnError) {
+                        throw new Error('Enter a page range like 1-3,5,8-10.');
+                    }
+                    return [];
+                }
+
+                const pages = new Set();
+                const segments = input.split(',').map(part => part.trim()).filter(Boolean);
+
+                if (segments.length === 0) {
+                    if (throwOnError) {
+                        throw new Error('Enter a page range like 1-3,5,8-10.');
+                    }
+                    return [];
+                }
+
+                for (const segment of segments) {
+                    if (segment.includes('-')) {
+                        const [startRaw, endRaw] = segment.split('-').map(part => part.trim());
+                        const start = Number(startRaw);
+                        const end = Number(endRaw);
+
+                        if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end < 1) {
+                            if (throwOnError) {
+                                throw new Error(`Invalid range "${segment}". Use positive page numbers.`);
+                            }
+                            return [];
+                        }
+
+                        if (start > end) {
+                            if (throwOnError) {
+                                throw new Error(`Invalid range "${segment}". Start page must be less than or equal to end page.`);
+                            }
+                            return [];
+                        }
+
+                        if (end > this.pages.length) {
+                            if (throwOnError) {
+                                throw new Error(`Range "${segment}" exceeds the PDF page count of ${this.pages.length}.`);
+                            }
+                            return [];
+                        }
+
+                        for (let page = start; page <= end; page++) {
+                            pages.add(page - 1);
+                        }
+                        continue;
+                    }
+
+                    const page = Number(segment);
+                    if (!Number.isInteger(page) || page < 1 || page > this.pages.length) {
+                        if (throwOnError) {
+                            throw new Error(`Invalid page "${segment}". Enter a page number between 1 and ${this.pages.length}.`);
+                        }
+                        return [];
+                    }
+
+                    pages.add(page - 1);
+                }
+
+                return [...pages].sort((a, b) => a - b);
             }
 
             async splitPDF() {
@@ -780,38 +914,28 @@
                 try {
                     const zip = new JSZip();
                     let outputFiles = [];
-                    let totalOutputBytes = 0;
+                    let pagesToExport = [];
 
                     if (this.splitMode === 'all') {
-                        // Split all pages
-                        for (let i = 0; i < this.pages.length; i++) {
-                            const newPdf = await PDFLib.PDFDocument.create();
-                            const [copiedPage] = await newPdf.copyPages(this.pdfDoc, [i]);
-                            newPdf.addPage(copiedPage);
-
-                            const pdfBytes = await newPdf.save();
-                            zip.file(`page_${i + 1}.pdf`, pdfBytes);
-                            outputFiles.push(`page_${i + 1}.pdf`);
-                            totalOutputBytes += pdfBytes.length;
-                        }
+                        pagesToExport = this.pages.map((_, index) => index);
                     } else if (this.splitMode === 'selected') {
-                        // Selected pages
-                        for (const pageIndex of this.selectedPages) {
-                            const newPdf = await PDFLib.PDFDocument.create();
-                            const [copiedPage] = await newPdf.copyPages(this.pdfDoc, [pageIndex]);
-                            newPdf.addPage(copiedPage);
-
-                            const pdfBytes = await newPdf.save();
-                            zip.file(`page_${pageIndex + 1}.pdf`, pdfBytes);
-                            outputFiles.push(`page_${pageIndex + 1}.pdf`);
-                            totalOutputBytes += pdfBytes.length;
-                        }
+                        pagesToExport = [...this.selectedPages].sort((a, b) => a - b);
                     } else {
-                        throw new Error('Custom page range is not implemented yet. Use "All pages" or "Selected pages only".');
+                        pagesToExport = this.parsePageRanges(true);
                     }
 
-                    if (outputFiles.length === 0) {
+                    if (pagesToExport.length === 0) {
                         throw new Error('No pages selected to split.');
+                    }
+
+                    for (const pageIndex of pagesToExport) {
+                        const newPdf = await PDFLib.PDFDocument.create();
+                        const [copiedPage] = await newPdf.copyPages(this.pdfDoc, [pageIndex]);
+                        newPdf.addPage(copiedPage);
+
+                        const pdfBytes = await newPdf.save();
+                        zip.file(`page_${pageIndex + 1}.pdf`, pdfBytes);
+                        outputFiles.push(`page_${pageIndex + 1}.pdf`);
                     }
 
                     // Generate ZIP and download

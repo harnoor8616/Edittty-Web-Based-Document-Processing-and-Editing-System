@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - PDFPRO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --accent: #f59e0b;
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #5b6475;
+            --border: #dbe2ea;
+            --radius: 18px;
+            --shadow: 0 24px 48px -24px rgb(15 23 42 / 0.32);
+            --hero: linear-gradient(135deg, #0f766e 0%, #0ea5a4 48%, #f59e0b 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(245, 158, 11, 0.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.18), transparent 30%),
+                var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+        }
+
+        .navbar,
+        .footer {
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(219, 226, 234, 0.85);
+        }
+
+        .footer {
+            border-top: 1px solid rgba(219, 226, 234, 0.85);
+            border-bottom: 0;
+            margin-top: 4rem;
+        }
+
+        .nav-container,
+        .footer-container,
+        .content {
+            width: min(1080px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
+        .nav-container,
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.45rem;
+            color: var(--primary-dark);
+            letter-spacing: 0.03em;
+        }
+
+        .nav-links,
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.1rem;
+        }
+
+        .nav-links a,
+        .footer-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover,
+        .footer-links a:hover {
+            color: var(--primary-dark);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1.5rem;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .hero-panel,
+        .response-panel,
+        .contact-card,
+        .direct-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .hero-panel {
+            overflow: hidden;
+        }
+
+        .hero-banner {
+            background: var(--hero);
+            color: white;
+            padding: 2.5rem;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            opacity: 0.88;
+            margin-bottom: 0.9rem;
+        }
+
+        .hero-banner h1 {
+            font-size: clamp(2.3rem, 4vw, 4rem);
+            line-height: 1.05;
+            margin-bottom: 1rem;
+            max-width: 10ch;
+        }
+
+        .hero-banner p {
+            max-width: 56ch;
+            font-size: 1.05rem;
+            opacity: 0.94;
+        }
+
+        .hero-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.4rem;
+            background: #fcfdff;
+        }
+
+        .hero-stat {
+            padding: 1rem;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+        }
+
+        .hero-stat strong {
+            display: block;
+            color: var(--primary-dark);
+            font-size: 1.15rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-stat span {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .response-panel {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .response-panel h2 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .response-panel p {
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .response-list {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .response-item {
+            display: flex;
+            gap: 0.9rem;
+            align-items: flex-start;
+            padding: 0.95rem;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .response-item i {
+            color: var(--primary);
+            margin-top: 0.2rem;
+        }
+
+        .section-title {
+            margin: 2.5rem 0 1rem;
+            font-size: 1.8rem;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            margin-bottom: 1.4rem;
+            max-width: 64ch;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .contact-card {
+            padding: 1.4rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.18s ease, border-color 0.18s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-4px);
+            border-color: #b9c6d6;
+        }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(245, 158, 11, 0.18));
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h3 {
+            margin-bottom: 0.35rem;
+            font-size: 1.15rem;
+        }
+
+        .contact-card p {
+            color: var(--muted);
+            margin-bottom: 0.65rem;
+        }
+
+        .contact-card span {
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .direct-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .direct-box h3 {
+            margin-bottom: 0.35rem;
+        }
+
+        .direct-box p {
+            color: var(--muted);
+        }
+
+        .direct-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            background: var(--hero);
+            color: white;
+            padding: 0.95rem 1.2rem;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        .footer-copy {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 860px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-container,
+            .footer-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero-banner,
+            .response-panel,
+            .contact-card,
+            .direct-box {
+                padding-left: 1.2rem;
+                padding-right: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">PDFPRO</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/about.html">About</a>
+                <a href="/merge.html">Merge</a>
+                <a href="/split.html">Split</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <section class="hero">
+            <div class="hero-panel">
+                <div class="hero-banner">
+                    <span class="eyebrow">Contact PDFPRO</span>
+                    <h1>Let’s Keep This Project Moving</h1>
+                    <p>Use the contact options below for bug reports, feature ideas, collaboration, or general feedback about the PDF tools experience.</p>
+                </div>
+                <div class="hero-meta">
+                    <div class="hero-stat">
+                        <strong>Feedback</strong>
+                        <span>Report broken flows, UI issues, or confusing behavior</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong>Features</strong>
+                        <span>Share ideas for tools like compress, rotate, convert, and more</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong>Collaboration</strong>
+                        <span>Reach out for project discussion or improvement suggestions</span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="response-panel">
+                <div>
+                    <h2>Best Ways To Reach Out</h2>
+                    <p>If you want the quickest path, email is the most direct option. GitHub is great for technical discussions and project-related updates.</p>
+                </div>
+                <div class="response-list">
+                    <div class="response-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>Email for direct messages</strong>
+                            <div>Good for bug reports, project questions, and general feedback.</div>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <i class="fab fa-github"></i>
+                        <div>
+                            <strong>GitHub for code-related discussion</strong>
+                            <div>Useful if you want to reference implementation details or share technical ideas.</div>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <i class="fab fa-linkedin"></i>
+                        <div>
+                            <strong>LinkedIn for professional connection</strong>
+                            <div>Best for networking, opportunities, and portfolio conversations.</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section>
+            <h2 class="section-title">Contact Channels</h2>
+            <p class="section-subtitle">Pick whichever channel fits the conversation best. Everything below is live and clickable.</p>
+
+            <div class="contact-grid">
+                <a class="contact-card" href="mailto:harnoorkaurdhiman@gmail.com">
+                    <div class="card-icon"><i class="fas fa-envelope"></i></div>
+                    <h3>Email</h3>
+                    <p>For support, feedback, and project questions.</p>
+                    <span>harnoorkaurdhiman@gmail.com</span>
+                </a>
+
+                <a class="contact-card" href="https://github.com/harnoor8616" target="_blank" rel="noreferrer">
+                    <div class="card-icon"><i class="fab fa-github"></i></div>
+                    <h3>GitHub</h3>
+                    <p>See the code, track progress, or connect around development work.</p>
+                    <span>github.com/harnoor8616</span>
+                </a>
+
+                <a class="contact-card" href="https://www.linkedin.com/in/harnoor-kaur-dhiman-29b9532b0/" target="_blank" rel="noreferrer">
+                    <div class="card-icon"><i class="fab fa-linkedin-in"></i></div>
+                    <h3>LinkedIn</h3>
+                    <p>Professional profile and collaboration channel.</p>
+                    <span>Open LinkedIn profile</span>
+                </a>
+
+                <a class="contact-card" href="tel:+917696784809">
+                    <div class="card-icon"><i class="fas fa-phone"></i></div>
+                    <h3>Phone</h3>
+                    <p>Use for direct communication when needed.</p>
+                    <span>+91 7696784809</span>
+                </a>
+            </div>
+
+            <div class="direct-box">
+                <div>
+                    <h3>Quickest support route</h3>
+                    <p>If something in PDFPRO is broken or confusing, send a short email with the tool name and what happened.</p>
+                </div>
+                <a class="direct-action" href="mailto:harnoorkaurdhiman@gmail.com?subject=PDFPRO%20Feedback">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Email
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/about.html">About</a>
+                <a href="/privacy.html">Privacy</a>
+                <a href="/contact.html">Contact</a>
+            </div>
+            <div class="footer-copy">&copy; 2026 PDFPRO. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+
+</html>
